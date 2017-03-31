@@ -1,0 +1,9 @@
+﻿{
+  "issuer": "https://substrate.office.com/sts",
+  "jwks_uri": "https://substrate.office.com/sts/common/discovery/keys",
+  "authorization_endpoint": "https://substrate.office.com/sts/authorize/1",
+  "response_types_supported": [ "id_token", "token" ],
+  "subject_types_supported": [ "public" ],
+  "id_token_signing_alg_values_supported": [ "RS256" ],
+  "claims_supported": [ "ver", "iss", "aud", "appid", "exp", "iat", "nbf", "sub", "acr", "appidacr" ]
+}
