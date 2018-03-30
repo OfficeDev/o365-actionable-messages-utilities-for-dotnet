@@ -26,18 +26,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.O365.ActionableMessages.Authentication
+namespace Microsoft.O365.ActionableMessages.Utilities
 {
     using System;
     using System.Diagnostics;
-    using System.IdentityModel;
-    using System.IdentityModel.Tokens;
+    using System.IdentityModel.Tokens.Jwt;
     using System.Linq;
     using System.Security.Claims;
     using System.Threading;
     using System.Threading.Tasks;
 
     using Microsoft.IdentityModel.Protocols;
+    using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+    using Microsoft.IdentityModel.Tokens;
 
     /// <summary>
     /// Class to validate an actionable message token.
@@ -49,6 +50,9 @@ namespace Microsoft.O365.ActionableMessages.Authentication
         /// </summary>
         private const int TokenTimeValidationClockSkewBufferInMinutes = 5;
 
+        /// <summary>
+        /// The OpenID configuration data retriever.
+        /// </summary>
         private readonly IConfigurationManager<OpenIdConnectConfiguration> configurationManager;
 
         /// <summary>
@@ -56,7 +60,9 @@ namespace Microsoft.O365.ActionableMessages.Authentication
         /// </summary>
         public ActionableMessageTokenValidator()
         {
-            configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(O365OpenIdConfiguration.MetadataUrl);
+            this.configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
+                O365OpenIdConfiguration.MetadataUrl,
+                new OpenIdConnectConfigurationRetriever());
         }
 
         /// <summary>
@@ -66,21 +72,13 @@ namespace Microsoft.O365.ActionableMessages.Authentication
         /// <param name="configurationManager">The configuration manager to read the OpenID configuration from.</param>
         public ActionableMessageTokenValidator(IConfigurationManager<OpenIdConnectConfiguration> configurationManager)
         {
-            if (configurationManager == null)
-            {
-                throw new ArgumentNullException("configurationManager");
-            }
-
-            this.configurationManager = configurationManager;
+            this.configurationManager = configurationManager ?? throw new ArgumentNullException(nameof(configurationManager));
         }
 
-        /// <summary>
-        /// Validates the token with the given target service base URL.
-        /// </summary>
-        /// <param name="token">The token to validate.</param>
-        /// <param name="targetServiceBaseUrl">The expected target service base URL.</param>
-        /// <returns>Returns the result of the validation.</returns>
-        public async Task<ActionableMessageTokenValidationResult> ValidateTokenAsync(string token, string targetServiceBaseUrl)
+        /// <inheritdoc />
+        public async Task<ActionableMessageTokenValidationResult> ValidateTokenAsync(
+            string token, 
+            string targetServiceBaseUrl)
         {
             if (string.IsNullOrEmpty(token))
             {
@@ -95,7 +93,7 @@ namespace Microsoft.O365.ActionableMessages.Authentication
             CancellationToken cancellationToken;
             OpenIdConnectConfiguration o365OpenIdConfig = await configurationManager.GetConfigurationAsync(cancellationToken);
             ClaimsPrincipal claimsPrincipal;
-            ActionableMessageTokenValidationResult result = new Authentication.ActionableMessageTokenValidationResult();
+            ActionableMessageTokenValidationResult result = new ActionableMessageTokenValidationResult();
 
             var parameters = new TokenValidationParameters()
             {
@@ -106,7 +104,7 @@ namespace Microsoft.O365.ActionableMessages.Authentication
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.FromMinutes(TokenTimeValidationClockSkewBufferInMinutes),
                 RequireSignedTokens = true,
-                IssuerSigningTokens = o365OpenIdConfig.SigningTokens
+                IssuerSigningKeys = o365OpenIdConfig.SigningKeys,
             };
 
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
@@ -133,7 +131,7 @@ namespace Microsoft.O365.ActionableMessages.Authentication
                 result.Exception = ex;
                 return result;
             }
-            catch (SignatureVerificationFailedException ex)
+            catch (SecurityTokenInvalidSignatureException ex)
             {
                 Trace.TraceError("Invalid signature.");
                 result.Exception = ex;
@@ -164,8 +162,8 @@ namespace Microsoft.O365.ActionableMessages.Authentication
             if (!string.Equals(GetClaimValue(identity, "appid"), O365OpenIdConfiguration.AppId, StringComparison.OrdinalIgnoreCase))
             {
                 Trace.TraceError(
-                    "App ID does not match. Expected: {0} Actual: {1}", 
-                    O365OpenIdConfiguration.AppId, 
+                    "App ID does not match. Expected: {0} Actual: {1}",
+                    O365OpenIdConfiguration.AppId,
                     GetClaimValue(identity, "appid"));
                 return null;
             }
@@ -190,7 +188,7 @@ namespace Microsoft.O365.ActionableMessages.Authentication
         private static string GetClaimValue(ClaimsIdentity identity, string claimType)
         {
             Claim claim = identity.Claims.FirstOrDefault(c => c.Type == claimType);
-            return claim != null ? claim.Value : null;
+            return claim?.Value;
         }
     }
 }
