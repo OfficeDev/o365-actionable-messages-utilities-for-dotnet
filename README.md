@@ -19,6 +19,11 @@ Please refer to this [sample application](https://github.com/OfficeDev/outlook-a
 ## Assemblies in this repo
 ----
 
+### 2.0.0
+#### Microsoft.O365.ActionableMessages.Utilities (version 2.0.0)
+
+* Support for System.IdentityModel.Tokens.Jwt >= 5.2.1.
+
 ### 1.0.0
 #### Microsoft.O365.ActionableMessages.Utilities (version 1.0.0)
 

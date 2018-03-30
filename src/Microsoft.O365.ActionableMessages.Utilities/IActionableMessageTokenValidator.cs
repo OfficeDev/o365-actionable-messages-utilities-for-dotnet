@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.O365.ActionableMessages.Authentication
+namespace Microsoft.O365.ActionableMessages.Utilities
 {
     using System.Threading.Tasks;
 

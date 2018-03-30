@@ -29,14 +29,15 @@
 namespace Microsoft.O365.ActionableMessages.Utilities.Tests
 {
     using System;
-    using System.IdentityModel.Tokens;
     using System.Reflection;
     using System.Security.Cryptography.X509Certificates;
     using System.Threading;
     using System.Threading.Tasks;
 
     using Microsoft.IdentityModel.Protocols;
-    using Microsoft.O365.ActionableMessages.Authentication;
+    using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+    using Microsoft.IdentityModel.Tokens;
+    using Microsoft.O365.ActionableMessages.Utilities;
     using Moq;
     using Newtonsoft.Json.Linq;
     using System.IO;
@@ -68,7 +69,7 @@ namespace Microsoft.O365.ActionableMessages.Utilities.Tests
             string token = CertificateHelper.GenerateJsonWebToken(testCert, "john@contoso.com", "nicole@contoso.com", "https://api.contoso.com");
             ActionableMessageTokenValidationResult result = await validator.ValidateTokenAsync(token, "https://api.contoso.com");
 
-            Assert.Equal(true, result.ValidationSucceeded);
+            Assert.True(result.ValidationSucceeded);
             Assert.Equal("john@contoso.com", result.ActionPerformer);
             Assert.Equal("nicole@contoso.com", result.Sender);
         }
@@ -82,7 +83,7 @@ namespace Microsoft.O365.ActionableMessages.Utilities.Tests
         {
             ActionableMessageTokenValidator validator = new ActionableMessageTokenValidator();
             ActionableMessageTokenValidationResult result = await validator.ValidateTokenAsync("abc", "https://www.microsoft.com");
-            Assert.Equal(false, result.ValidationSucceeded);
+            Assert.False(result.ValidationSucceeded);
         }
 
         /// <summary>
@@ -110,9 +111,9 @@ namespace Microsoft.O365.ActionableMessages.Utilities.Tests
             JObject jwk = CertificateHelper.ToJsonWebKey(cert);
             JsonWebKeySet jwks = new JsonWebKeySet(jwk.ToString());
 
-            foreach (SecurityToken token in jwks.GetSigningTokens())
+            foreach (SecurityKey key in jwks.GetSigningKeys())
             {
-                config.SigningTokens.Add(token);
+                config.SigningKeys.Add(key);
             }
 
             return config;

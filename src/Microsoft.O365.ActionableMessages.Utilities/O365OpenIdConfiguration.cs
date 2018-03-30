@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.O365.ActionableMessages
+namespace Microsoft.O365.ActionableMessages.Utilities
 {
     /// <summary>
     /// Class with constants for O365 OpenID configuration.

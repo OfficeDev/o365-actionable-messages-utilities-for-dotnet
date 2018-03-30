@@ -1,5 +1,6 @@
 ﻿{
   "issuer": "https://substrate.office.com/sts",
+  "token_endpoint": "https://substrate.office.com/sts/token/1",
   "jwks_uri": "https://substrate.office.com/sts/common/discovery/keys",
   "authorization_endpoint": "https://substrate.office.com/sts/authorize/1",
   "response_types_supported": [ "id_token", "token" ],
