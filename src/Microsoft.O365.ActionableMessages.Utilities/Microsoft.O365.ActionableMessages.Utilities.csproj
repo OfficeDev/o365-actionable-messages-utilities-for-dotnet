@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net462;</TargetFrameworks>
+    <TargetFrameworks>net452</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Description>Contains classes for O365 Actionable Messages.</Description>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Description>A collection of utility classes to implement O365 Actionable Messages.</Description>
     <Company>Microsoft</Company>
     <Authors>Microsoft</Authors>
     <Version>2.0.0</Version>
@@ -12,6 +12,9 @@
     <PackageProjectUrl>https://github.com/OfficeDev/o365-actionable-messages-utilities-for-dotnet</PackageProjectUrl>
     <RepositoryUrl>https://github.com/OfficeDev/o365-actionable-messages-utilities-for-dotnet</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
+    <PackageLicenseUrl>https://github.com/OfficeDev/o365-actionable-messages-utilities-for-dotnet/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageIconUrl>https://github.com/OfficeDev/o365-actionable-messages-utilities-for-dotnet/blob/master/doc/icons/oam.ico?raw=true</PackageIconUrl>
+    <PackageTags>Office O365 ActionableMessage OAM Email</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
