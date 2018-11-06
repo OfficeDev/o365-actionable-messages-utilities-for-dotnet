@@ -10,7 +10,7 @@ Minimum recommended version - 1.0.0
 You can find the changes for each version in the [change log](https://github.com/OfficeDev/o365-actionable-messages-utilities-for-dotnet/blob/master/CHANGELOG.md).
 
 ## Usage
-Currently the library only works on .Net 4.x. Support for .Net 5.x is coming.
+Currently the library works on .NET Standard 2.0.
 
 ## Samples and Documentation
 
