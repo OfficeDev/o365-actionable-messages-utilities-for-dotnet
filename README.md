@@ -1,3 +1,13 @@
+---
+topic: sample
+products:
+- Office 365
+languages:
+- C#
+extensions:
+  contentType: tools
+  createdDate: 3/30/2017 5:20:00 PM
+---
 Microsoft Office 365 Actionable Messages Utilities for .Net
 ===========
 
